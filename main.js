@@ -1,4 +1,3 @@
-// main.js
 class SceneManager {
     constructor() {
         // Scene setup
@@ -7,9 +6,6 @@ class SceneManager {
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.objects = {}; // Store objects for easy access
         this.groups = {}; // Store Group references
-
-        // Bind methods
-        this.animate = this.animate.bind(this);
 
         // Initialize
         this.init();
