@@ -1,5 +1,4 @@
-import { groupName } from "./Objects.js";
-
+// main.js
 class SceneManager {
     constructor() {
         // Scene setup
@@ -9,6 +8,9 @@ class SceneManager {
         this.objects = {}; // Store objects for easy access
         this.groups = {}; // Store Group references
 
+        // Bind methods
+        this.animate = this.animate.bind(this);
+
         // Initialize
         this.init();
     }
@@ -16,25 +18,71 @@ class SceneManager {
     init() {
         // Renderer settings
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setClearColor(0xefffef);
+        this.renderer.setClearColor(0xeeeeee);
         document.body.appendChild(this.renderer.domElement);
 
         // Camera position
         this.camera.position.set(5, 5, 5);
         this.camera.lookAt(0, 0, 0);
 
-        // Lights
-        this.addAmbientLight(0xffffff, 0.8);
-        this.addDirectionalLight(0xffffff, 0.2, { x: 0, y: 5, z: 5 });
+        // Lights (INCREASED INTENSITY)
+        this.addAmbientLight(0xffffff, 0.88); // Increased from 0.8
+        this.addDirectionalLight(0xffffff, 0.2, { x: 0, y: 5, z: 5 }); // Increased from 0.2
 
-        //Camera control
+        // Camera control
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
 
         // Event listeners
         window.addEventListener('resize', () => this.onWindowResize());
+
+        // Initialize groups and objects
+        this.initGroups(this.getGroups());
     }
 
-    initGroups() {
+    // Define groups and objects
+    // Add Objects / groups here
+    getGroups() {
+        return {
+            FJ: {
+                name: 'FJ',
+                children: ['Group1', 'Group2'],
+                position: { x: 0, y: 1, z: 0 }
+            },
+            Group1: {
+                name: 'Group1',
+                parent: 'FJ',
+                objects: [
+                    {
+                        name: 'cube',
+                        geometry: new THREE.BoxGeometry(1, 1, 1),
+                        material: new THREE.MeshStandardMaterial({ color: 0xff0000 }),
+                        position: { x: 0, y: 0, z: 0 }
+                    },
+                    {
+                        name: 'sphere',
+                        geometry: new THREE.SphereGeometry(0.5, 32, 32),
+                        material: new THREE.MeshStandardMaterial({ color: 0x00ff00 }),
+                        position: { x: 2, y: 0, z: 0 }
+                    }
+                ]
+            },
+            Group2: {
+                name: 'Group2',
+                parent: 'FJ',
+                objects: [
+                    {
+                        name: 'cylinder',
+                        geometry: new THREE.CylinderGeometry(0.5, 0.5, 1, 32),
+                        material: new THREE.MeshStandardMaterial({ color: 0x0000ff }),
+                        position: { x: -2, y: 0, z: 0 }
+                    }
+                ]
+            }
+        };
+    }
+
+    // Initialize Groups
+    initGroups(groups) {
         for (const groupName in groups) {
             const groupData = groups[groupName];
             const group = this.addGroup(groupData.name, groupData.parent);
@@ -62,12 +110,13 @@ class SceneManager {
             }
         }
     }
+
     // Group container
     addGroup(name, parentGroup = null) {
         const group = new THREE.Group();
         this.groups[name] = group;
         
-        if(parentGroup) {
+        if (parentGroup) {
             this.groups[parentGroup].add(group);
         } else {
             this.scene.add(group);
@@ -81,7 +130,7 @@ class SceneManager {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(position.x, position.y, position.z);
         
-        if(parent && this.groups[parent]) {
+        if (parent && this.groups[parent]) {
             this.groups[parent].add(mesh);
         } else {
             this.scene.add(mesh);
@@ -89,10 +138,6 @@ class SceneManager {
         
         this.objects[name] = mesh;
         return mesh;
-    }
-
-    getGroup(name) {
-        return this.groups[name];
     }
 
     // Get an object by name
@@ -122,7 +167,7 @@ class SceneManager {
 
     // Start animation loop
     animate() {
-        requestAnimationFrame(() => this.animate());
+        requestAnimationFrame(this.animate);
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
     }
@@ -130,29 +175,4 @@ class SceneManager {
 
 // Initialize and run
 const sceneManager = new SceneManager();
-sceneManager.addGroup('FJ');
-sceneManager.addGroup('Group', 'FJ');
-
-const Group1 = [
-    {
-        name: 'cube',
-        geometry: new THREE.BoxGeometry(1, 1, 1),
-        material: new THREE.MeshStandardMaterial({ color: 0xff0000 }),
-        pos: { x: 0, y: 0, z: 0 }
-    },
-    {
-        name: 'sphere',
-        geometry: new THREE.SphereGeometry(0.5, 32, 32),
-        material: new THREE.MeshStandardMaterial({ color: 0x00ff00 }),
-        pos: { x: 2, y: 0, z: 0 }
-    }
-]
-
-Group1.forEach(obj => {
-    sceneManager.addObject(obj.name, obj.geometry, obj.material, obj.pos, 'Group');
-});
-
-const mainGroup = sceneManager.getGroup('FJ');
-mainGroup.position.set(0,1,0);
-// Example: Rotate the cube
 sceneManager.animate();
