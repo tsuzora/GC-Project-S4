@@ -2,7 +2,7 @@ class SceneManager {
     constructor() {
         // Scene setup
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.objects = {}; // Store objects for easy access
         this.groups = {}; // Store Group references
@@ -19,8 +19,8 @@ class SceneManager {
         document.body.appendChild(this.renderer.domElement);
 
         // Camera position
-        this.camera.position.set(100, 45, 75);
-        this.camera.lookAt(new THREE.Vector3(10, 0, 30));
+        this.camera.position.set(65, 30, 60);
+        this.camera.lookAt(0, 0, 0);
 
         // Lights (INCREASED INTENSITY)
         this.addAmbientLight(0xffffff, 0.88); // Increased from 0.8
@@ -43,7 +43,7 @@ class SceneManager {
             FJ: {
                 name: 'FJ',
                 children: ['OuterWall', 'Floor'],
-                position: { x: -1, y: 5, z: 0 }
+                position: { x: 0, y: 0, z: 0 }
             },
             OuterWall: {
                 name: 'OuterWall',
@@ -71,9 +71,9 @@ class SceneManager {
                     },
                     {
                         name: 'wallFront',
-                        geometry: new THREE.BoxGeometry(4, 30, 0),
+                        geometry: new THREE.BoxGeometry(6, 30, 0),
                         material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
-                        position: { x: 27.5, y: 24, z: 22 }
+                        position: { x: 28.5, y: 24, z: 22 }
                     },
                     {
                         name: 'wallFront',
@@ -147,9 +147,15 @@ class SceneManager {
                     },
                     {
                         name: 'floor',
-                        geometry: new THREE.BoxGeometry(50, 0, 29),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc8c8c8 }),
-                        position: { x: 4.5, y: 9, z: 4.5 }
+                        geometry: new THREE.BoxGeometry(56, 0, 29),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc8880c8 }),
+                        position: { x: 7.5, y: 9, z: 4.5 }
+                    },
+                    {
+                        name: 'floor',
+                        geometry: new THREE.BoxGeometry(8, 0, 29),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc8c8880 }),
+                        position: { x: 31.5, y: 19, z: 4.5 }
                     },
                 ]
             }
