@@ -7,6 +7,7 @@ class SceneManager {
         this.objects = {}; // Store objects for easy access
         this.groups = {}; // Store Group references
 
+        this.animate = this.animate.bind(this);
         // Initialize
         this.init();
     }
@@ -18,8 +19,8 @@ class SceneManager {
         document.body.appendChild(this.renderer.domElement);
 
         // Camera position
-        this.camera.position.set(5, 5, 5);
-        this.camera.lookAt(0, 0, 0);
+        this.camera.position.set(100, 45, 75);
+        this.camera.lookAt(new THREE.Vector3(10, 0, 30));
 
         // Lights (INCREASED INTENSITY)
         this.addAmbientLight(0xffffff, 0.88); // Increased from 0.8
@@ -41,37 +42,115 @@ class SceneManager {
         return {
             FJ: {
                 name: 'FJ',
-                children: ['Group1', 'Group2'],
-                position: { x: 0, y: 1, z: 0 }
+                children: ['OuterWall', 'Floor'],
+                position: { x: -1, y: 5, z: 0 }
             },
-            Group1: {
-                name: 'Group1',
+            OuterWall: {
+                name: 'OuterWall',
                 parent: 'FJ',
+                position: { x: -5, y: 0, z: -3 },
                 objects: [
+                    //Front Wall
                     {
-                        name: 'cube',
-                        geometry: new THREE.BoxGeometry(1, 1, 1),
-                        material: new THREE.MeshStandardMaterial({ color: 0xff0000 }),
-                        position: { x: 0, y: 0, z: 0 }
+                        name: 'wallFront',
+                        geometry: new THREE.BoxGeometry(25, 10, 0),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
+                        position: { x: -4, y: 4, z: 17 }
                     },
                     {
-                        name: 'sphere',
-                        geometry: new THREE.SphereGeometry(0.5, 32, 32),
-                        material: new THREE.MeshStandardMaterial({ color: 0x00ff00 }),
-                        position: { x: 2, y: 0, z: 0 }
-                    }
+                        name: 'wallFront',
+                        geometry: new THREE.BoxGeometry(11, 10, 0),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
+                        position: { x: 14, y: 14, z: 22 }
+                    },
+                    {
+                        name: 'wallFront',
+                        geometry: new THREE.BoxGeometry(14, 10, 0),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
+                        position: { x: 32.5, y: 14, z: 22 }
+                    },
+                    {
+                        name: 'wallFront',
+                        geometry: new THREE.BoxGeometry(4, 30, 0),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
+                        position: { x: 27.5, y: 24, z: 22 }
+                    },
+                    {
+                        name: 'wallFront',
+                        geometry: new THREE.BoxGeometry(6, 50, 0),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
+                        position: { x: 22.5, y: 24, z: 27 }
+                    },
+                    {
+                        name: 'wallFront',
+                        geometry: new THREE.BoxGeometry(10, 50, 0),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
+                        position: { x: -21.5, y: 24, z: 10 }
+                    },
+                    // Back Wall
+                    {
+                        name: 'wallBack',
+                        geometry: new THREE.BoxGeometry(66, 50, 0),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc1a9a9 }),
+                        position: { x: 6.5, y: 24, z: -8 }
+                    },
+                    //Left Wall
+                    {
+                        name: 'wallLeft',
+                        geometry: new THREE.BoxGeometry(0, 10, 5),
+                        material: new THREE.MeshStandardMaterial({ color: 0xa1c1b1 }),
+                        position: { x: 8.5, y: 14, z: 19.5 }
+                    },
+                    {
+                        name: 'wallLeft',
+                        geometry: new THREE.BoxGeometry(0, 10, 7),
+                        material: new THREE.MeshStandardMaterial({ color: 0xa1c1b1 }),
+                        position: { x: -16.5, y: 4, z: 13.5 }
+                    },
+                    {
+                        name: 'wallLeft',
+                        geometry: new THREE.BoxGeometry(0, 50, 5),
+                        material: new THREE.MeshStandardMaterial({ color: 0xa1c1b1 }),
+                        position: { x: 19.5, y: 24, z: 24.5 }
+                    },
+                    {
+                        name: 'wallLeft',
+                        geometry: new THREE.BoxGeometry(0, 50, 18),
+                        material: new THREE.MeshStandardMaterial({ color: 0xa1c1b1 }),
+                        position: { x: -26.5, y: 24, z: 1 }
+                    },
+                    // Right Wall
+                    {
+                        name: 'wallRight',
+                        geometry: new THREE.BoxGeometry(0, 50, 5),
+                        material: new THREE.MeshStandardMaterial({ color: 0x909090 }),
+                        position: { x: 25.5, y: 24, z: 24.5 }
+                    },
+                    {
+                        name: 'wallRight',
+                        geometry: new THREE.BoxGeometry(0, 10, 30),
+                        material: new THREE.MeshStandardMaterial({ color: 0x909090 }),
+                        position: { x: 39.5, y: 14, z: 7 }
+                    },
                 ]
             },
-            Group2: {
-                name: 'Group2',
+            Floor: {
+                name: 'Floor',
                 parent: 'FJ',
+                position: { x: -1, y: 0, z: 0 },
                 objects: [
                     {
-                        name: 'cylinder',
-                        geometry: new THREE.CylinderGeometry(0.5, 0.5, 1, 32),
-                        material: new THREE.MeshStandardMaterial({ color: 0x0000ff }),
-                        position: { x: -2, y: 0, z: 0 }
-                    }
+                        name: 'floor',
+                        geometry: new THREE.BoxGeometry(75, 0, 50),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc8c8c8 }),
+                        position: { x: 0, y: -1, z: 0 }
+                    },
+                    {
+                        name: 'floor',
+                        geometry: new THREE.BoxGeometry(50, 0, 29),
+                        material: new THREE.MeshStandardMaterial({ color: 0xc8c8c8 }),
+                        position: { x: 4.5, y: 9, z: 4.5 }
+                    },
                 ]
             }
         };
