@@ -2,26 +2,53 @@ class SceneManager {
     constructor() {
         // Scene setup
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(80, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.camera = new THREE.PerspectiveCamera(74, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
         this.objects = {}; // Store objects for easy access
         this.groups = {}; // Store Group references
+
+
+        this.debugElement = document.getElementById('debug');
 
         this.animate = this.animate.bind(this);
         // Initialize
         this.init();
     }
+    
+    // Position Info
+    updateDebugInfo() {
+        const pos = this.camera.position;
+        const rot = this.camera.rotation;
+        const target = this.controls.target;
 
+        this.debugElement.innerHTML = `
+            Camera Position:<br>
+            X: ${pos.x.toFixed(2)}<br>
+            Y: ${pos.y.toFixed(2)}<br>
+            Z: ${pos.z.toFixed(2)}<br>
+            <br>
+            Camera Rotation:<br>
+            X: ${rot.x.toFixed(2)}<br>
+            Y: ${rot.y.toFixed(2)}<br>
+            Z: ${rot.z.toFixed(2)}<br>
+            <br>
+            LookAt Target:<br>
+            X: ${target.x.toFixed(2)}<br>
+            Y: ${target.y.toFixed(2)}<br>
+            Z: ${target.z.toFixed(2)}
+        `;
+    }
+
+    // Initialize Canvas and Objects
     init() {
         // Renderer settings
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0xeeeeee);
         document.body.appendChild(this.renderer.domElement);
-
+        
         // Camera position
-        this.camera.position.set(65, 30, 60);
-        this.camera.lookAt(0, 0, 0);
-
+        this.camera.position.set(-20, 15, 50);
+        
         // Lights (INCREASED INTENSITY)
         this.addAmbientLight(0xffffff, 0.88); // Increased from 0.8
         this.addDirectionalLight(0xffffff, 0.2, { x: 0, y: 5, z: 5 }); // Increased from 0.2
@@ -249,8 +276,11 @@ class SceneManager {
     // Start animation loop
     animate() {
         requestAnimationFrame(this.animate);
+        this.controls.target.set(0, 2, 0);
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
+        this.updateDebugInfo();
+        console.log(this.camera.position)
     }
 }
 

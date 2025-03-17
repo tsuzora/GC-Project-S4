@@ -7,9 +7,21 @@
     <style>
         body { margin: 0; padding: 0; }
         canvas { display: block; }
+        #debug {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px;
+            font-family: monospace;
+            border-radius: 5px;
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
+    <div id="debug"></div>
     <!-- Include Three.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Optional: Include GLTFLoader for 3D models -->
