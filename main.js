@@ -4,6 +4,9 @@ class SceneManager {
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(74, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.renderer = new THREE.WebGLRenderer({ antialias: true });
+
+        this.textureLoader = new THREE.TextureLoader();
+        this.sharedTexture = this.textureLoader.load('testImg.png');
         this.objects = {}; // Store objects for easy access
         this.groups = {}; // Store Group references
 
@@ -174,9 +177,9 @@ class SceneManager {
                     },
                     {
                         name: 'floor',
-                        geometry: new THREE.BoxGeometry(56, 0, 29),
+                        geometry: new THREE.BoxGeometry(56, 0, 30),
                         material: new THREE.MeshStandardMaterial({ color: 0xc8880c8 }),
-                        position: { x: 7.5, y: 9, z: 4.5 }
+                        position: { x: 7.5, y: 9, z: 4 }
                     },
                     {
                         name: 'floor',
@@ -237,7 +240,23 @@ class SceneManager {
     addObject(name, geometry, material, position = { x: 0, y: 0, z: 0 }, parent = null) {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(position.x, position.y, position.z);
-        
+        // mesh.updateMatrixWorld();
+        // const posAttr = geometry.attributes.position;
+        // const uvArray = [];
+        // const scale = 1; // Adjust this factor to match your texture's scale
+        // for (let i = 0; i < posAttr.count; i++) {
+        //     const vertex = new THREE.Vector3().fromBufferAttribute(posAttr, i);
+        //     // Convert vertex from local to world coordinates:
+        //     vertex.applyMatrix4(mesh.matrixWorld);
+        //     // Compute UV from the world x and z (for example):
+        //     const u = vertex.x * scale;
+        //     const v = vertex.y * scale;
+
+        //     uvArray.push(u, v);
+        // }
+        // geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvArray, 2));
+        // geometry.attributes.uv.needsUpdate = true;
+
         if (parent && this.groups[parent]) {
             this.groups[parent].add(mesh);
         } else {
