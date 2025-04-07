@@ -7,11 +7,11 @@
     <style>
         body { margin: 0; padding: 0; }
         canvas { display: block; }
-        #debug, #gridControls {
+        #objects ,#debug, #gridControls {
             position: fixed;
             top: 10px;
             left: 10px;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.4);
             color: white;
             padding: 10px;
             font-family: monospace;
@@ -22,11 +22,12 @@
 </head>
 <body>
     <div id="debug"></div>
-    <div id="gridControls">
+    <div id="objects" style="top: 60px; left: 150px"></div>
+    <div id="gridControls" style="top: 10px; left: 150px">
         <button id="toggleX">Toggle X Grid</button>
         <button id="toggleY">Toggle Y Grid</button>
         <button id="toggleZ">Toggle Z Grid</button>
-      </div>
+    </div>
     <!-- Include Three.js from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <!-- Optional: Include GLTFLoader for 3D models -->

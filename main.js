@@ -1,4 +1,6 @@
 import { objects} from './objects.mjs';
+import { FJ_Model } from './FJ_Model.mjs';
+
 class SceneManager {
     constructor() {
         // Scene setup
@@ -69,25 +71,52 @@ class SceneManager {
 
         // Initialize groups and objects
         this.initGroups(this.getGroups());
+
+        this.createToggleButtons();
     }
 
+    createToggleButtons() {
+        const container = document.getElementById('objects'); // or another UI div
+        if (!container) return;
+    
+        const buttonContainer = document.createElement('div');
+        buttonContainer.id = 'modelToggleButtons';
+        buttonContainer.innerHTML = `<strong>Model Visibility:</strong><br/>`;
+        Object.keys(this.groups).forEach(groupName => {
+            const button = document.createElement('button');
+            button.textContent = `${groupName}`;
+            
+            button.addEventListener('click', () => {
+                const group = this.groups[groupName];
+                group.visible = !group.visible;
+            });
+    
+            buttonContainer.appendChild(button);
+        });
+    
+        container.appendChild(buttonContainer);
+    }
+    
     getGrid() {
         // XZ grid: usually used as the "ground" grid. We will move it along Y.
         const gridXZ = new THREE.GridHelper(100, 100, 0x0000ff, 0xf2bd86);
         gridXZ.position.set(0, 0, 0);
         this.scene.add(gridXZ);
+        gridXZ.visible = false
       
         // XY grid - rotate to lie in the XY plane, adjust its Z position.
         const gridXY = new THREE.GridHelper(100, 100, 0xff0000, 0x779fc3);
         gridXY.rotation.x = Math.PI / 2;
         gridXY.position.set(0, 0, 0);
         this.scene.add(gridXY);
+        gridXY.visible = false
       
         // YZ grid - rotate to lie in the YZ plane, adjust its X position.
         const gridYZ = new THREE.GridHelper(100, 100, 0x00ff00, 0xab77c3);
         gridYZ.rotation.z = Math.PI / 2;
         gridYZ.position.set(0, 0, 0);
         this.scene.add(gridYZ);
+        gridYZ.visible = false
       
         // Attach event listeners to the buttons inside the debug menu to toggle visibility
         document.getElementById('toggleX').addEventListener('click', () => {
@@ -152,7 +181,7 @@ class SceneManager {
     // Define groups and objects
     // Add Objects / groups here
     getGroups() {
-        return objects
+        return [objects, FJ_Model]
     }
 
     // Initialize Groups
@@ -166,33 +195,35 @@ class SceneManager {
                         })
                         .catch(error => console.error('Failed to fetch data:', error));
         console.log(data)
-
-        for (const groupName in groups) {
-            const groupData = groups[groupName];
-            const group = this.addGroup(groupData.name, groupData.parent);
-
-            // Set group position if specified
-            if (groupData.position) {
-                group.position.set(
-                    groupData.position.x,
-                    groupData.position.y,
-                    groupData.position.z
-                );
-            }
-
-            // Add objects to the group
-            if (groupData.objects) {
-                groupData.objects.forEach(obj => {
-                    this.addObject(
-                        obj.name,
-                        obj.geometry,
-                        obj.material,
-                        obj.position,
-                        groupData.name
+        
+        groups.forEach(model => {
+            for (const groupName in model) {
+                const groupData = model[groupName];
+                const group = this.addGroup(groupData.name, groupData.parent);
+    
+                // Set group position if specified
+                if (groupData.position) {
+                    group.position.set(
+                        groupData.position.x,
+                        groupData.position.y,
+                        groupData.position.z
                     );
-                });
+                }
+    
+                // Add objects to the group
+                if (groupData.objects) {
+                    groupData.objects.forEach(obj => {
+                        this.addObject(
+                            obj.name,
+                            obj.geometry,
+                            obj.material,
+                            obj.position,
+                            groupData.name
+                        );
+                    });
+                }
             }
-        }
+        })
     }
 
     // Group container

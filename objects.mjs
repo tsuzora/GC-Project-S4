@@ -1,12 +1,12 @@
 export const objects = {
-    FJ: {
-        name: 'FJ',
+    FJWall: {
+        name: 'FJWall',
         children: ['OuterWall', 'Floor'],
-        position: { x: 0, y: 1, z: 0 }
+        position: { x: -0.5, y: 1, z: 0 }
     },
     OuterWall: {
         name: 'OuterWall',
-        parent: 'FJ',
+        parent: 'FJWall',
         position: { x: -5, y: 0, z: -3 },
         objects: [
             //Front Wall
@@ -95,7 +95,7 @@ export const objects = {
     },
     Floor: {
         name: 'Floor',
-        parent: 'FJ',
+        parent: 'FJWall',
         position: { x: -1, y: 0, z: 0 },
         objects: [
             {
