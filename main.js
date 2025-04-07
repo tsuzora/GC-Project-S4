@@ -1,3 +1,4 @@
+import { objects} from './objects.mjs';
 class SceneManager {
     constructor() {
         // Scene setup
@@ -9,7 +10,6 @@ class SceneManager {
         this.sharedTexture = this.textureLoader.load('testImg.png');
         this.objects = {}; // Store objects for easy access
         this.groups = {}; // Store Group references
-
 
         this.debugElement = document.getElementById('debug');
 
@@ -48,7 +48,7 @@ class SceneManager {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setClearColor(0xeeeeee);
         document.body.appendChild(this.renderer.domElement);
-        
+        this.getGrid()
         // Camera position
         this.camera.position.set(-20, 15, 50);
         
@@ -58,6 +58,11 @@ class SceneManager {
 
         // Camera control
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.mouseButtons = {
+            LEFT: THREE.MOUSE.ROTATE,
+            MIDDLE: -1,
+            RIGHT: -1
+        }
 
         // Event listeners
         window.addEventListener('resize', () => this.onWindowResize());
@@ -66,134 +71,102 @@ class SceneManager {
         this.initGroups(this.getGroups());
     }
 
+    getGrid() {
+        // XZ grid: usually used as the "ground" grid. We will move it along Y.
+        const gridXZ = new THREE.GridHelper(100, 100, 0x0000ff, 0xf2bd86);
+        gridXZ.position.set(0, 0, 0);
+        this.scene.add(gridXZ);
+      
+        // XY grid - rotate to lie in the XY plane, adjust its Z position.
+        const gridXY = new THREE.GridHelper(100, 100, 0xff0000, 0x779fc3);
+        gridXY.rotation.x = Math.PI / 2;
+        gridXY.position.set(0, 0, 0);
+        this.scene.add(gridXY);
+      
+        // YZ grid - rotate to lie in the YZ plane, adjust its X position.
+        const gridYZ = new THREE.GridHelper(100, 100, 0x00ff00, 0xab77c3);
+        gridYZ.rotation.z = Math.PI / 2;
+        gridYZ.position.set(0, 0, 0);
+        this.scene.add(gridYZ);
+      
+        // Attach event listeners to the buttons inside the debug menu to toggle visibility
+        document.getElementById('toggleX').addEventListener('click', () => {
+          gridXZ.visible = !gridXZ.visible;
+        });
+        document.getElementById('toggleY').addEventListener('click', () => {
+          gridXY.visible = !gridXY.visible;
+        });
+        document.getElementById('toggleZ').addEventListener('click', () => {
+          gridYZ.visible = !gridYZ.visible;
+        });
+      
+        // ---- Right-click Dragging to Adjust Grid Positions ----
+      
+        // Disable the default right-click context menu on the canvas
+        this.renderer.domElement.addEventListener('contextmenu', (e) => {
+          e.preventDefault();
+        });
+      
+        // Variables to track dragging state
+        let isRightDragging = false;
+        let startX = 0;
+        let startY = 0;
+        const sensitivity = 0.1; // Adjust sensitivity as needed
+      
+        // Start dragging on right mouse button down
+        this.renderer.domElement.addEventListener('mousedown', (e) => {
+          if (e.button === 2) { // Right mouse button
+            isRightDragging = true;
+            startX = e.clientX;
+            startY = e.clientY;
+          }
+        });
+      
+        // End dragging on right mouse button up
+        this.renderer.domElement.addEventListener('mouseup', (e) => {
+          if (e.button === 2) {
+            isRightDragging = false;
+          }
+        });
+      
+        // On mouse move, if right dragging, update grid positions
+        this.renderer.domElement.addEventListener('mousemove', (e) => {
+          if (!isRightDragging) return;
+      
+          const deltaX = e.clientX - startX;
+          const deltaY = e.clientY - startY;
+      
+          // For example:
+          // - Horizontal dragging adjusts the YZ grid's X position.
+          gridYZ.position.x += deltaX * sensitivity;
+          // - Vertical dragging adjusts the XZ grid's Y position.
+          gridXZ.position.y -= deltaY * sensitivity;
+          // - Also adjust the XY grid's Z position based on vertical dragging.
+          gridXY.position.z += deltaY * sensitivity;
+      
+          // Update starting coordinates for next move event
+          startX = e.clientX;
+          startY = e.clientY;
+        });
+      }
     // Define groups and objects
     // Add Objects / groups here
     getGroups() {
-        return {
-            FJ: {
-                name: 'FJ',
-                children: ['OuterWall', 'Floor'],
-                position: { x: 0, y: 0, z: 0 }
-            },
-            OuterWall: {
-                name: 'OuterWall',
-                parent: 'FJ',
-                position: { x: -5, y: 0, z: -3 },
-                objects: [
-                    //Front Wall
-                    {
-                        name: 'wallFront',
-                        geometry: new THREE.BoxGeometry(25, 10, 0),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
-                        position: { x: -4, y: 4, z: 17 }
-                    },
-                    {
-                        name: 'wallFront',
-                        geometry: new THREE.BoxGeometry(11, 10, 0),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
-                        position: { x: 14, y: 14, z: 22 }
-                    },
-                    {
-                        name: 'wallFront',
-                        geometry: new THREE.BoxGeometry(14, 10, 0),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
-                        position: { x: 32.5, y: 14, z: 22 }
-                    },
-                    {
-                        name: 'wallFront',
-                        geometry: new THREE.BoxGeometry(6, 30, 0),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
-                        position: { x: 28.5, y: 24, z: 22 }
-                    },
-                    {
-                        name: 'wallFront',
-                        geometry: new THREE.BoxGeometry(6, 50, 0),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
-                        position: { x: 22.5, y: 24, z: 27 }
-                    },
-                    {
-                        name: 'wallFront',
-                        geometry: new THREE.BoxGeometry(10, 50, 0),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc1c1b1 }),
-                        position: { x: -21.5, y: 24, z: 10 }
-                    },
-                    // Back Wall
-                    {
-                        name: 'wallBack',
-                        geometry: new THREE.BoxGeometry(66, 50, 0),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc1a9a9 }),
-                        position: { x: 6.5, y: 24, z: -8 }
-                    },
-                    //Left Wall
-                    {
-                        name: 'wallLeft',
-                        geometry: new THREE.BoxGeometry(0, 10, 5),
-                        material: new THREE.MeshStandardMaterial({ color: 0xa1c1b1 }),
-                        position: { x: 8.5, y: 14, z: 19.5 }
-                    },
-                    {
-                        name: 'wallLeft',
-                        geometry: new THREE.BoxGeometry(0, 10, 7),
-                        material: new THREE.MeshStandardMaterial({ color: 0xa1c1b1 }),
-                        position: { x: -16.5, y: 4, z: 13.5 }
-                    },
-                    {
-                        name: 'wallLeft',
-                        geometry: new THREE.BoxGeometry(0, 50, 5),
-                        material: new THREE.MeshStandardMaterial({ color: 0xa1c1b1 }),
-                        position: { x: 19.5, y: 24, z: 24.5 }
-                    },
-                    {
-                        name: 'wallLeft',
-                        geometry: new THREE.BoxGeometry(0, 50, 18),
-                        material: new THREE.MeshStandardMaterial({ color: 0xa1c1b1 }),
-                        position: { x: -26.5, y: 24, z: 1 }
-                    },
-                    // Right Wall
-                    {
-                        name: 'wallRight',
-                        geometry: new THREE.BoxGeometry(0, 50, 5),
-                        material: new THREE.MeshStandardMaterial({ color: 0x909090 }),
-                        position: { x: 25.5, y: 24, z: 24.5 }
-                    },
-                    {
-                        name: 'wallRight',
-                        geometry: new THREE.BoxGeometry(0, 10, 30),
-                        material: new THREE.MeshStandardMaterial({ color: 0x909090 }),
-                        position: { x: 39.5, y: 14, z: 7 }
-                    },
-                ]
-            },
-            Floor: {
-                name: 'Floor',
-                parent: 'FJ',
-                position: { x: -1, y: 0, z: 0 },
-                objects: [
-                    {
-                        name: 'floor',
-                        geometry: new THREE.BoxGeometry(75, 0, 50),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc8c8c8 }),
-                        position: { x: 0, y: -1, z: 0 }
-                    },
-                    {
-                        name: 'floor',
-                        geometry: new THREE.BoxGeometry(56, 0, 30),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc8880c8 }),
-                        position: { x: 7.5, y: 9, z: 4 }
-                    },
-                    {
-                        name: 'floor',
-                        geometry: new THREE.BoxGeometry(8, 0, 29),
-                        material: new THREE.MeshStandardMaterial({ color: 0xc8c8880 }),
-                        position: { x: 31.5, y: 19, z: 4.5 }
-                    },
-                ]
-            }
-        };
+        return objects
     }
 
     // Initialize Groups
     initGroups(groups) {
+        const data = fetch('./test.json')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .catch(error => console.error('Failed to fetch data:', error));
+        console.log(data)
+
         for (const groupName in groups) {
             const groupData = groups[groupName];
             const group = this.addGroup(groupData.name, groupData.parent);
