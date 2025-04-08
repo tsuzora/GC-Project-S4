@@ -3,14 +3,19 @@ import { objects } from "./objects.mjs";
 export const FJ_Model = {
     FJ: {
         name: 'FJ',
-        position: {x: 0, y: 1, z: 0},
+        position: {x: 0, y: 5, z: 0},
         objects: [
-            
+            {
+                name: 'fj-booth',
+                geometry: new THREE.BoxGeometry(8, 10, 6),
+                material: new THREE.MeshStandardMaterial({ color: 0x923123 }),
+                position: { x: 30, y: 0, z: 0 }
+            },
         ]
     },
     Outerior: {
         name: 'Outerior',
-        position: {x: 0, y: 0, z: 0},
+        position: {x: 0, y: 1, z: 0},
         objects: [
             {
                 name: 'myc-elev',
