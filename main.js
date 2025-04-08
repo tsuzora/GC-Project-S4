@@ -52,7 +52,7 @@ class SceneManager {
         document.body.appendChild(this.renderer.domElement);
         this.getGrid()
         // Camera position
-        this.camera.position.set(-20, 15, 50);
+        this.camera.position.set(-21, 5, 40);
         
         // Lights (INCREASED INTENSITY)
         this.addAmbientLight(0xffffff, 0.88); // Increased from 0.8
@@ -60,11 +60,17 @@ class SceneManager {
 
         // Camera control
         this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enablePan = true;
         this.controls.mouseButtons = {
             LEFT: THREE.MOUSE.ROTATE,
             MIDDLE: -1,
-            RIGHT: -1
+            RIGHT: THREE.MOUSE.PAN
         }
+
+        this.controls.target.set(0, 2, 0);
+        this.controls.update();
+
+        this.controls.panSpeed = 0.5;
 
         // Event listeners
         window.addEventListener('resize', () => this.onWindowResize());
@@ -244,22 +250,6 @@ class SceneManager {
     addObject(name, geometry, material, position = { x: 0, y: 0, z: 0 }, parent = null) {
         const mesh = new THREE.Mesh(geometry, material);
         mesh.position.set(position.x, position.y, position.z);
-        // mesh.updateMatrixWorld();
-        // const posAttr = geometry.attributes.position;
-        // const uvArray = [];
-        // const scale = 1; // Adjust this factor to match your texture's scale
-        // for (let i = 0; i < posAttr.count; i++) {
-        //     const vertex = new THREE.Vector3().fromBufferAttribute(posAttr, i);
-        //     // Convert vertex from local to world coordinates:
-        //     vertex.applyMatrix4(mesh.matrixWorld);
-        //     // Compute UV from the world x and z (for example):
-        //     const u = vertex.x * scale;
-        //     const v = vertex.y * scale;
-
-        //     uvArray.push(u, v);
-        // }
-        // geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvArray, 2));
-        // geometry.attributes.uv.needsUpdate = true;
 
         if (parent && this.groups[parent]) {
             this.groups[parent].add(mesh);
@@ -299,7 +289,6 @@ class SceneManager {
     // Start animation loop
     animate() {
         requestAnimationFrame(this.animate);
-        this.controls.target.set(0, 2, 0);
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
         this.updateDebugInfo();
