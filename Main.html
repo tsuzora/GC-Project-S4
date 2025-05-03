@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FJ, Basket Court, Gym, and Swimming Pool </title>
+
+  <!-- Three.js + GLTFLoader + PointerLockControls -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128/examples/js/controls/PointerLockControls.js"></script>
+
+  <style>
+    body { margin:0; overflow:hidden }
+    canvas{display:block}
+    #ui {
+      position:absolute; top:10px; left:10px;
+      background:rgba(0,0,0,0.6); padding:10px; border-radius:4px;
+      color:#fff; font-family:sans-serif; z-index:10; max-width:240px;
+    }
+    #ui h3 { margin:8px 0 4px; font-size:14px }
+    #ui label { display:flex; align-items:center; margin:4px 0; font-size:12px }
+    #ui input[type="number"] {
+      width:60px; margin-left:6px; padding:2px 4px; font-size:12px;
+    }
+    #ui input[type="color"] {
+      width:100%; height:28px; border:none; margin-top:4px;
+    }
+    #ui button {
+      width:100%; margin:6px 0; padding:6px;
+      background:#222; border:none; color:#fff; cursor:pointer; font-size:12px;
+    }
+    #ui button:disabled { opacity:0.4; cursor:default }
+    hr { border-color:#555; margin:8px 0 }
+
+    /* bottom-right spin button */
+    #showAllSpinBtn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: #222;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      font-size: 13px;
+      border-radius: 4px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    #showAllSpinBtn:disabled {
+      opacity: 0.4;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+  <div id="ui">
+    <h3>Top-Down Views (Press 1,2,3)</h3>
+    <div id="topViewControls"></div>
+    <button id="restoreBtn" disabled>Restore (R)</button>
+    <hr/>
+
+    <h3>Hemisphere Light</h3>
+    <label>
+      Intensity:
+      <input
+        id="hemiIntensity"
+        type="range"
+        step="0.1"
+        min="0"
+        max="5"
+        value="1.2"
+      >
+      <span id="hemiIntensityValue"></span>
+    </label>
+    
+    <h3>Directional Light</h3>
+    <label>
+      Intensity:
+      <input
+        id="dirIntensity"
+        type="range"
+        step="0.1"
+        min="0"
+        max="5"
+        value="0.8"
+      >
+      <span id="dirIntensityValue"></span>
+    </label>
+    
+    <label>
+      Position X:
+      <input
+        id="dirPosX"
+        type="range"
+        step="1"
+        min="-50"
+        max="50"
+        value="10"
+      >
+      <span id="dirPosXValue"></span>
+    </label>
+    
+    <label>
+      Position Y:
+      <input
+        id="dirPosY"
+        type="range"
+        step="1"
+        min="-50"
+        max="50"
+        value="20"
+      >
+      <span id="dirPosYValue"></span>
+    </label>
+    
+    <label>
+      Position Z:
+      <input
+        id="dirPosZ"
+        type="range"
+        step="1"
+        min="-50"
+        max="50"
+        value="10"
+      >
+      <span id="dirPosZValue"></span>
+    </label>
+    
+    <label>
+      Color:
+      <input
+        id="dirColor"
+        type="color"
+        value="#ffffff"
+      >
+    </label>
+  </div>
+
+  <!-- Separate bottom-right button -->
+  <button id="showAllSpinBtn">Show All &amp; Spin (4)</button>
+
+  <script src="main.js"></script>
+</body>
+</html>
